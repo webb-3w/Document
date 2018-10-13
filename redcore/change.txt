@@ -1,0 +1,822 @@
+commit 2723abb8c290adac270ee1e8da39b8195fb3e878
+Author: webb.wang <weiwei.wang.01@redcore.cn>
+Date:   Sat Oct 13 18:53:01 2018 +0800
+
+    old ui base
+
+ base/mac/sdk_forward_declarations.h                |   21 +
+ base/threading/thread_restrictions.cc              |    6 +-
+ base/win/win_util.cc                               |   27 +
+ base/win/win_util.h                                |    3 +
+ build/config/BUILD.gn                              |    7 +
+ build/config/features.gni                          |    1 +
+ build/config/pch.gni                               |    3 +-
+ build/config/redcore.gni                           |   13 +
+ build/linux/chrome2redcore.py                      |   20 +
+ build/util/version.py                              |    3 +
+ build/win/reorder-imports.py                       |    6 +-
+ cc/BUILD.gn                                        |    4 +
+ cc/layers/ysp_watermark_layer.cc                   |   83 +
+ cc/layers/ysp_watermark_layer.h                    |   44 +
+ cc/layers/ysp_watermark_layer_impl.cc              |  377 +
+ cc/layers/ysp_watermark_layer_impl.h               |  122 +
+ cc/trees/layer_tree_impl.h                         |   11 +
+ chrome/BUILD.gn                                    |   43 +-
+ chrome/VERSION                                     |    3 +
+ chrome/app/IEInterface.tlb                         |  Bin 0 -> 7876 bytes
+ chrome/app/autoupdate.sh                           |   62 +
+ chrome/app/chrome_child_resource.h                 |    0
+ chrome/app/chrome_command_ids.h                    |    4 +
+ chrome/app/chrome_dll.rc                           |   12 +
+ chrome/app/chrome_exe_main_mac.cc                  |    6 +-
+ chrome/app/chromium_strings.grd                    |    8 +-
+ chrome/app/generated_resources.grd                 |  267 +
+ chrome/app/resources/chromium_strings_zh-CN.xtb    |    4 +-
+ chrome/app/theme/chromium/BRANDING                 |   16 +-
+ .../default_100_percent/mac/ysp/add_hover.png      |  Bin 0 -> 242 bytes
+ .../default_100_percent/mac/ysp/add_normal.png     |  Bin 0 -> 235 bytes
+ .../default_100_percent/mac/ysp/add_pressed.png    |  Bin 0 -> 242 bytes
+ .../mac/ysp/browser_back_disabled.png              |  Bin 0 -> 412 bytes
+ .../mac/ysp/browser_back_hover.png                 |  Bin 0 -> 549 bytes
+ .../mac/ysp/browser_back_normal.png                |  Bin 0 -> 445 bytes
+ .../mac/ysp/browser_back_pressed.png               |  Bin 0 -> 553 bytes
+ .../mac/ysp/browser_forward_disabled.png           |  Bin 0 -> 399 bytes
+ .../mac/ysp/browser_forward_hover.png              |  Bin 0 -> 497 bytes
+ .../mac/ysp/browser_forward_normal.png             |  Bin 0 -> 419 bytes
+ .../mac/ysp/browser_forward_pressed.png            |  Bin 0 -> 556 bytes
+ .../mac/ysp/browser_home_hover.png                 |  Bin 0 -> 529 bytes
+ .../mac/ysp/browser_home_normal.png                |  Bin 0 -> 384 bytes
+ .../mac/ysp/browser_home_pressed.png               |  Bin 0 -> 490 bytes
+ .../mac/ysp/browser_lock_hover.png                 |    0
+ .../mac/ysp/browser_lock_normal.png                |    0
+ .../mac/ysp/browser_lock_pressed.png               |    0
+ .../mac/ysp/browser_reload_disabled.png            |  Bin 0 -> 437 bytes
+ .../mac/ysp/browser_reload_hover.png               |  Bin 0 -> 558 bytes
+ .../mac/ysp/browser_reload_normal.png              |  Bin 0 -> 475 bytes
+ .../mac/ysp/browser_reload_pressed.png             |  Bin 0 -> 555 bytes
+ .../mac/ysp/browser_stop_disabled.png              |  Bin 0 -> 352 bytes
+ .../mac/ysp/browser_stop_hover.png                 |  Bin 0 -> 475 bytes
+ .../mac/ysp/browser_stop_normal.png                |  Bin 0 -> 375 bytes
+ .../mac/ysp/browser_stop_pressed.png               |  Bin 0 -> 477 bytes
+ .../mac/ysp/browser_toolbar_bezel_hover.png        |  Bin 0 -> 256 bytes
+ .../mac/ysp/browser_toolbar_bezel_pressed.png      |  Bin 0 -> 250 bytes
+ .../mac/ysp/browser_tools_bar.png                  |  Bin 0 -> 142 bytes
+ .../theme/default_100_percent/mac/ysp/close_1.png  |  Bin 0 -> 253 bytes
+ .../default_100_percent/mac/ysp/close_1_hover.png  |  Bin 0 -> 507 bytes
+ .../default_100_percent/mac/ysp/close_1_mask.png   |  Bin 0 -> 266 bytes
+ .../mac/ysp/close_1_pressed.png                    |  Bin 0 -> 573 bytes
+ .../default_100_percent/mac/ysp/login_avatar.png   |  Bin 0 -> 434 bytes
+ .../mac/ysp/newtab_button_mask.png                 |  Bin 0 -> 147 bytes
+ .../mac/ysp/tab_active_left.png                    |  Bin 0 -> 89 bytes
+ .../mac/ysp/tab_active_right.png                   |  Bin 0 -> 89 bytes
+ .../mac/ysp/tab_inactive_left.png                  |  Bin 0 -> 89 bytes
+ .../mac/ysp/tab_inactive_right.png                 |  Bin 0 -> 89 bytes
+ .../mac/ysp/theme_default_active.png               |  Bin 0 -> 89 bytes
+ .../mac/ysp/theme_default_active_background.png    |  Bin 0 -> 89 bytes
+ .../mac/ysp/theme_default_inactive.png             |  Bin 0 -> 89 bytes
+ .../mac/ysp/theme_default_inactive_background.png  |  Bin 0 -> 89 bytes
+ .../mac/ysp/title_background.png                   |  Bin 0 -> 5133 bytes
+ .../mac/ysp/title_background_inactive.png          |  Bin 0 -> 3018 bytes
+ .../mac/ysp/toolbar_shade_top.png                  |  Bin 0 -> 440 bytes
+ .../theme/default_100_percent/ysp/add_hover.png    |  Bin 0 -> 140 bytes
+ .../theme/default_100_percent/ysp/add_normal.png   |  Bin 0 -> 140 bytes
+ .../theme/default_100_percent/ysp/add_pressed.png  |  Bin 0 -> 140 bytes
+ .../theme/default_100_percent/ysp/avatar_frame.png |  Bin 0 -> 2557 bytes
+ .../ysp/browser_back_disabled.png                  |  Bin 0 -> 205 bytes
+ .../default_100_percent/ysp/browser_back_hover.png |  Bin 0 -> 230 bytes
+ .../ysp/browser_back_normal.png                    |  Bin 0 -> 231 bytes
+ .../ysp/browser_back_pressed.png                   |  Bin 0 -> 226 bytes
+ .../ysp/browser_forward_disabled.png               |  Bin 0 -> 206 bytes
+ .../ysp/browser_forward_hover.png                  |  Bin 0 -> 221 bytes
+ .../ysp/browser_forward_normal.png                 |  Bin 0 -> 230 bytes
+ .../ysp/browser_forward_pressed.png                |  Bin 0 -> 226 bytes
+ .../default_100_percent/ysp/browser_home_hover.png |  Bin 0 -> 267 bytes
+ .../ysp/browser_home_normal.png                    |  Bin 0 -> 261 bytes
+ .../ysp/browser_home_pressed.png                   |  Bin 0 -> 257 bytes
+ .../default_100_percent/ysp/browser_lock_hover.png |  Bin 0 -> 188 bytes
+ .../ysp/browser_lock_normal.png                    |  Bin 0 -> 191 bytes
+ .../ysp/browser_lock_pressed.png                   |  Bin 0 -> 185 bytes
+ .../ysp/browser_password_hover.png                 |  Bin 0 -> 302 bytes
+ .../ysp/browser_password_normal.png                |  Bin 0 -> 314 bytes
+ .../ysp/browser_password_pressed.png               |  Bin 0 -> 307 bytes
+ .../ysp/browser_reload_disabled.png                |  Bin 0 -> 254 bytes
+ .../ysp/browser_reload_hover.png                   |  Bin 0 -> 300 bytes
+ .../ysp/browser_reload_normal.png                  |  Bin 0 -> 303 bytes
+ .../ysp/browser_reload_pressed.png                 |  Bin 0 -> 290 bytes
+ .../ysp/browser_stop_disabled.png                  |  Bin 0 -> 218 bytes
+ .../default_100_percent/ysp/browser_stop_hover.png |  Bin 0 -> 216 bytes
+ .../ysp/browser_stop_normal.png                    |  Bin 0 -> 216 bytes
+ .../ysp/browser_stop_pressed.png                   |  Bin 0 -> 216 bytes
+ .../ysp/browser_toolbar_bezel_hover.png            |  Bin 0 -> 140 bytes
+ .../ysp/browser_toolbar_bezel_pressed.png          |  Bin 0 -> 140 bytes
+ .../default_100_percent/ysp/browser_tools_bar.png  |  Bin 0 -> 144 bytes
+ .../ysp/icon_add_user_white.png                    |  Bin 0 -> 220 bytes
+ .../ysp/lock_screen_background.png                 |  Bin 0 -> 89212 bytes
+ .../theme/default_100_percent/ysp/login_avatar.png |  Bin 0 -> 570 bytes
+ .../theme/default_100_percent/ysp/login_back.png   |  Bin 0 -> 2144 bytes
+ .../theme/default_100_percent/ysp/login_header.png |  Bin 0 -> 8850 bytes
+ .../ysp/login_icon_lock_screen_default.png         |  Bin 0 -> 215 bytes
+ .../ysp/login_icon_lock_screen_hover.png           |  Bin 0 -> 197 bytes
+ .../ysp/login_icon_lock_screen_pressed.png         |  Bin 0 -> 210 bytes
+ .../default_100_percent/ysp/login_setting.png      |  Bin 0 -> 7064 bytes
+ .../default_100_percent/ysp/newtab_button_mask.png |  Bin 0 -> 159 bytes
+ .../default_100_percent/ysp/renderer_mode_ie.png   |  Bin 0 -> 678 bytes
+ .../ysp/renderer_mode_ie_grey.png                  |  Bin 0 -> 625 bytes
+ .../ysp/renderer_mode_ie_white.png                 |  Bin 0 -> 458 bytes
+ .../ysp/renderer_mode_speed.png                    |  Bin 0 -> 525 bytes
+ .../ysp/renderer_mode_speed_grey.png               |  Bin 0 -> 475 bytes
+ .../ysp/renderer_mode_speed_white.png              |  Bin 0 -> 302 bytes
+ .../default_200_percent/mac/ysp/add_hover.png      |  Bin 0 -> 440 bytes
+ .../default_200_percent/mac/ysp/add_normal.png     |  Bin 0 -> 426 bytes
+ .../default_200_percent/mac/ysp/add_pressed.png    |  Bin 0 -> 440 bytes
+ .../mac/ysp/browser_back_disabled.png              |  Bin 0 -> 830 bytes
+ .../mac/ysp/browser_back_hover.png                 |  Bin 0 -> 988 bytes
+ .../mac/ysp/browser_back_normal.png                |  Bin 0 -> 888 bytes
+ .../mac/ysp/browser_back_pressed.png               |  Bin 0 -> 1136 bytes
+ .../mac/ysp/browser_forward_disabled.png           |  Bin 0 -> 809 bytes
+ .../mac/ysp/browser_forward_hover.png              |  Bin 0 -> 996 bytes
+ .../mac/ysp/browser_forward_normal.png             |  Bin 0 -> 907 bytes
+ .../mac/ysp/browser_forward_pressed.png            |  Bin 0 -> 1166 bytes
+ .../mac/ysp/browser_home_hover.png                 |  Bin 0 -> 1091 bytes
+ .../mac/ysp/browser_home_normal.png                |  Bin 0 -> 795 bytes
+ .../mac/ysp/browser_home_pressed.png               |  Bin 0 -> 1070 bytes
+ .../mac/ysp/browser_lock_hover.png                 |    0
+ .../mac/ysp/browser_lock_normal.png                |    0
+ .../mac/ysp/browser_lock_pressed.png               |    0
+ .../mac/ysp/browser_reload_disabled.png            |  Bin 0 -> 945 bytes
+ .../mac/ysp/browser_reload_hover.png               |  Bin 0 -> 1173 bytes
+ .../mac/ysp/browser_reload_normal.png              |  Bin 0 -> 977 bytes
+ .../mac/ysp/browser_reload_pressed.png             |  Bin 0 -> 1173 bytes
+ .../mac/ysp/browser_stop_disabled.png              |  Bin 0 -> 635 bytes
+ .../mac/ysp/browser_stop_hover.png                 |  Bin 0 -> 872 bytes
+ .../mac/ysp/browser_stop_normal.png                |  Bin 0 -> 650 bytes
+ .../mac/ysp/browser_stop_pressed.png               |  Bin 0 -> 843 bytes
+ .../mac/ysp/browser_toolbar_bezel_hover.png        |  Bin 0 -> 479 bytes
+ .../mac/ysp/browser_toolbar_bezel_pressed.png      |  Bin 0 -> 468 bytes
+ .../mac/ysp/browser_tools_bar.png                  |  Bin 0 -> 204 bytes
+ .../theme/default_200_percent/mac/ysp/close_1.png  |  Bin 0 -> 461 bytes
+ .../default_200_percent/mac/ysp/close_1_hover.png  |  Bin 0 -> 941 bytes
+ .../default_200_percent/mac/ysp/close_1_mask.png   |  Bin 0 -> 447 bytes
+ .../mac/ysp/close_1_pressed.png                    |  Bin 0 -> 1137 bytes
+ .../default_200_percent/mac/ysp/login_avatar.png   |  Bin 0 -> 721 bytes
+ .../theme/default_200_percent/ysp/avatar_frame.png |  Bin 0 -> 4355 bytes
+ .../theme/default_200_percent/ysp/login_avatar.png |  Bin 0 -> 7212 bytes
+ .../theme/default_200_percent/ysp/login_back.png   |  Bin 0 -> 2144 bytes
+ .../theme/default_200_percent/ysp/login_header.png |  Bin 0 -> 14400 bytes
+ .../default_200_percent/ysp/login_setting.png      |  Bin 0 -> 7064 bytes
+ .../default_200_percent/ysp/renderer_mode_ie.png   |  Bin 0 -> 1404 bytes
+ .../ysp/renderer_mode_ie_grey.png                  |  Bin 0 -> 1286 bytes
+ .../ysp/renderer_mode_ie_white.png                 |  Bin 0 -> 925 bytes
+ .../ysp/renderer_mode_speed.png                    |  Bin 0 -> 1013 bytes
+ .../ysp/renderer_mode_speed_grey.png               |  Bin 0 -> 922 bytes
+ .../ysp/renderer_mode_speed_white.png              |  Bin 0 -> 560 bytes
+ chrome/app/theme/theme_resources.grd               |  153 +-
+ chrome/app/update_mac.m                            |   55 +
+ chrome/browser/BUILD.gn                            |   30 +
+ chrome/browser/browser_resources.grd               |  193 +
+ chrome/browser/devtools/devtools_window.cc         |   35 +
+ chrome/browser/devtools/devtools_window.h          |    6 +
+ chrome/browser/download/download_history.cc        |    9 +-
+ chrome/browser/download/download_item_model.cc     |   12 +
+ .../browser/download/download_target_determiner.cc |   31 +
+ chrome/browser/download/download_ui_controller.cc  |   45 +
+ chrome/browser/download/download_ui_controller.h   |   17 +-
+ chrome/browser/extensions/BUILD.gn                 |   10 +
+ chrome/browser/extensions/api/tabs/tabs_api.cc     |  109 +
+ chrome/browser/extensions/api/tabs/tabs_api.h      |   26 +
+ .../api/web_navigation/web_navigation_api.cc       |   33 +
+ .../api/web_navigation/web_navigation_api.h        |   11 +
+ .../web_navigation/web_navigation_api_constants.cc |   13 +
+ .../web_navigation/web_navigation_api_constants.h  |   13 +
+ .../web_navigation/web_navigation_api_helpers.cc   |   56 +
+ .../web_navigation/web_navigation_api_helpers.h    |   19 +
+ .../extensions/api/yspmanager/yspmanager_api.cc    |   37 +
+ .../extensions/api/yspmanager/yspmanager_api.h     |   42 +
+ chrome/browser/mac/master_prefs.mm                 |    5 +
+ .../browser/password_manager/password_store_mac.cc |   14 +
+ .../browser/password_manager/password_store_mac.h  |    5 +
+ chrome/browser/profiles/profile_io_data.cc         |   14 +
+ .../default_apps/external_extensions.json          |   37 +-
+ .../browser/resources/default_apps/push_server.crx |    0
+ chrome/browser/resources/default_apps/ysp_sso.crx  |    0
+ chrome/browser/resources/help/about.png            |    0
+ chrome/browser/resources/help/logo.png             |    0
+ chrome/browser/resources/history/search_icon.svg   |   20 +
+ chrome/browser/resources/history/select_icon.svg   |   22 +
+ .../resources/options/deviceImg/Pad_android.png    |    0
+ .../resources/options/deviceImg/android.png        |    0
+ .../browser/resources/options/deviceImg/iPad.png   |    0
+ .../browser/resources/options/deviceImg/iphone.png |    0
+ .../browser/resources/options/deviceImg/linux.png  |    0
+ chrome/browser/resources/options/deviceImg/mac.png |    0
+ .../resources/options/deviceImg/macbook.png        |    0
+ .../resources/options/deviceImg/windows_pc.png     |    0
+ chrome/browser/resources/options/personal_data.css |  188 +
+ chrome/browser/resources/options/personal_data.js  |  427 +
+ .../resources/options/personal_data_browser.js     |  252 +
+ .../resources/options/personal_data_cropper.css    |   22 +
+ .../resources/options/personal_data_cropper.js     |   24 +
+ .../resources/options/personal_data_proxy.js       |  478 +
+ .../resources/options/personal_data_section.html   |    8 +
+ .../resources/options/personal_data_upload.css     |  204 +
+ .../resources/options/personal_data_upload.html    |   54 +
+ .../resources/options/personal_data_upload.js      |  372 +
+ .../resources/options/rdc_reset_password.css       |  117 +
+ .../resources/options/rdc_reset_password.html      |   56 +
+ .../resources/options/rdc_reset_password.js        |  217 +
+ .../resources/options/ysp_password_ADmanager.css   |   60 +
+ .../resources/options/ysp_password_ADmanager.html  |  106 +
+ .../resources/options/ysp_password_ADmanager.js    |  516 ++
+ .../options/ysp_password_ADmanager_list.css        |  206 +
+ .../options/ysp_password_ADmanager_list.js         | 1220 +++
+ .../resources/options/ysp_personal_device.css      |  131 +
+ .../resources/options/ysp_personal_device.js       |  177 +
+ .../options/ysp_personal_device_section.html       |   15 +
+ chrome/browser/resources/redcore_ntp/Home.html     |  531 ++
+ chrome/browser/resources/redcore_ntp/Home.js       |  139 +
+ .../browser/resources/redcore_ntp/HomeBrowser.js   |  324 +
+ chrome/browser/resources/redcore_ntp/HomeProxy.js  |  215 +
+ .../browser/resources/redcore_ntp/amazeui.min.css  |    1 +
+ .../browser/resources/redcore_ntp/amazeui.min.js   |    2 +
+ chrome/browser/resources/redcore_ntp/firstOpen.js  |   11 +
+ .../resources/redcore_ntp/generateHeader.js        |  127 +
+ .../browser/resources/redcore_ntp/generateTab.js   |  159 +
+ .../browser/resources/redcore_ntp/hello/img/bg.png |    0
+ .../resources/redcore_ntp/hello/img/logo.png       |    0
+ .../resources/redcore_ntp/hello/img/round.png      |    0
+ .../redcore_ntp/hello/img/swiper1/001.png          |    0
+ .../resources/redcore_ntp/hello/img/swiper1/1.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/19.png |    0
+ .../resources/redcore_ntp/hello/img/swiper1/2.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/3.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/4.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/5.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/6.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/7.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper1/8.png  |    0
+ .../redcore_ntp/hello/img/swiper1/888.png          |    0
+ .../resources/redcore_ntp/hello/img/swiper2/1.png  |    0
+ .../redcore_ntp/hello/img/swiper2/2-2.png          |    0
+ .../resources/redcore_ntp/hello/img/swiper2/2.png  |    0
+ .../redcore_ntp/hello/img/swiper2/3-3.png          |    0
+ .../resources/redcore_ntp/hello/img/swiper2/3.png  |    0
+ .../redcore_ntp/hello/img/swiper2/4-4.png          |    0
+ .../resources/redcore_ntp/hello/img/swiper2/4.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper2/5.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper2/6.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper3/10.png |    0
+ .../resources/redcore_ntp/hello/img/swiper3/11.png |    0
+ .../resources/redcore_ntp/hello/img/swiper3/12.png |    0
+ .../resources/redcore_ntp/hello/img/swiper3/13.png |    0
+ .../resources/redcore_ntp/hello/img/swiper3/21.png |    0
+ .../resources/redcore_ntp/hello/img/swiper3/7.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper3/8.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper3/9.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper4/15.png |    0
+ .../resources/redcore_ntp/hello/img/swiper4/16.png |    0
+ .../resources/redcore_ntp/hello/img/swiper4/17.png |    0
+ .../resources/redcore_ntp/hello/img/swiper4/5.png  |    0
+ .../resources/redcore_ntp/hello/img/swiper4/6.png  |    0
+ .../resources/redcore_ntp/hello/img/up-red.png     |    0
+ .../browser/resources/redcore_ntp/hello/img/up.png |    0
+ .../browser/resources/redcore_ntp/hello/index.css  |    1 +
+ .../browser/resources/redcore_ntp/hello/motion.css |  521 ++
+ .../resources/redcore_ntp/hello/swiper.min.css     |   12 +
+ .../resources/redcore_ntp/hello/swiper.min.js      |   12 +
+ .../resources/redcore_ntp/imgs/add_icon.svg        |   18 +
+ .../resources/redcore_ntp/imgs/app_back_icon.svg   |   14 +
+ .../redcore_ntp/imgs/appearance_hover_icon.png     |  Bin 0 -> 454 bytes
+ .../redcore_ntp/imgs/appearancel_icon.png          |  Bin 0 -> 471 bytes
+ .../resources/redcore_ntp/imgs/backIcon.svg        |   14 +
+ .../resources/redcore_ntp/imgs/back_hover_icon.png |  Bin 0 -> 531 bytes
+ .../redcore_ntp/imgs/back_normal_icon.png          |  Bin 0 -> 527 bytes
+ .../redcore_ntp/imgs/background/abb-1.png          |  Bin 0 -> 5224 bytes
+ .../redcore_ntp/imgs/background/abb-2.png          |  Bin 0 -> 4361 bytes
+ .../redcore_ntp/imgs/background/abb-3.png          |  Bin 0 -> 5154 bytes
+ .../redcore_ntp/imgs/background/abb-4.png          |  Bin 0 -> 4654 bytes
+ .../redcore_ntp/imgs/background/abb-5.png          |  Bin 0 -> 7731 bytes
+ .../redcore_ntp/imgs/background/abb-6.png          |  Bin 0 -> 8332 bytes
+ .../redcore_ntp/imgs/background/abb-7.png          |  Bin 0 -> 11038 bytes
+ .../redcore_ntp/imgs/background/abb-8.png          |  Bin 0 -> 8033 bytes
+ .../resources/redcore_ntp/imgs/background/bg-1.png |  Bin 0 -> 257288 bytes
+ .../resources/redcore_ntp/imgs/background/bg-2.png |  Bin 0 -> 305697 bytes
+ .../resources/redcore_ntp/imgs/background/bg-3.png |  Bin 0 -> 415524 bytes
+ .../resources/redcore_ntp/imgs/background/bg-4.png |  Bin 0 -> 342607 bytes
+ .../resources/redcore_ntp/imgs/background/bg-5.png |  Bin 0 -> 654944 bytes
+ .../resources/redcore_ntp/imgs/background/bg-6.png |  Bin 0 -> 722945 bytes
+ .../resources/redcore_ntp/imgs/background/bg-7.png |  Bin 0 -> 1002642 bytes
+ .../resources/redcore_ntp/imgs/background/bg-8.png |  Bin 0 -> 746171 bytes
+ .../resources/redcore_ntp/imgs/close_icon.png      |  Bin 0 -> 266 bytes
+ .../browser/resources/redcore_ntp/imgs/debug.log   |    1 +
+ .../resources/redcore_ntp/imgs/defaultBG.png       |    0
+ .../resources/redcore_ntp/imgs/defaultBanner.png   |    0
+ .../resources/redcore_ntp/imgs/defaultIcon.png     |  Bin 0 -> 614 bytes
+ .../resources/redcore_ntp/imgs/defaultLogo.png     |  Bin 0 -> 6996 bytes
+ .../resources/redcore_ntp/imgs/error_icon.png      |  Bin 0 -> 478 bytes
+ .../browser/resources/redcore_ntp/imgs/invalid.png |  Bin 0 -> 15023 bytes
+ .../redcore_ntp/imgs/load_failure_icon.png         |  Bin 0 -> 2294 bytes
+ .../browser/resources/redcore_ntp/imgs/loading.png |  Bin 0 -> 3865 bytes
+ .../resources/redcore_ntp/imgs/login/Group.png     |  Bin 0 -> 1260 bytes
+ .../resources/redcore_ntp/imgs/login/back-user.png |  Bin 0 -> 231 bytes
+ .../resources/redcore_ntp/imgs/login/backIcon.png  |  Bin 0 -> 224 bytes
+ .../resources/redcore_ntp/imgs/login/bg.png        |    0
+ .../redcore_ntp/imgs/login/home_index.png          |  Bin 0 -> 63536 bytes
+ .../redcore_ntp/imgs/login/password_icon.png       |  Bin 0 -> 208 bytes
+ .../resources/redcore_ntp/imgs/login/qrcode.png    |  Bin 0 -> 970 bytes
+ .../redcore_ntp/imgs/login/qrcodeSuccess.png       |  Bin 0 -> 728 bytes
+ .../redcore_ntp/imgs/login/redcoreLogo.png         |  Bin 0 -> 6284 bytes
+ .../resources/redcore_ntp/imgs/login/scan.png      |  Bin 0 -> 7195 bytes
+ .../resources/redcore_ntp/imgs/login/user_icon.png |  Bin 0 -> 294 bytes
+ .../resources/redcore_ntp/imgs/search_icon.png     |  Bin 0 -> 306 bytes
+ .../resources/redcore_ntp/imgs/selectIcon.png      |  Bin 0 -> 270 bytes
+ .../resources/redcore_ntp/imgs/selected_icon.png   |  Bin 0 -> 813 bytes
+ chrome/browser/resources/redcore_ntp/jquery.js     | 9210 ++++++++++++++++++++
+ chrome/browser/resources/redcore_ntp/login.js      |  685 ++
+ chrome/browser/resources/redcore_ntp/qrcode.min.js |    1 +
+ chrome/browser/resources/redcore_ntp/search.js     |   25 +
+ chrome/browser/resources/redcore_ntp/styles.css    | 1065 +++
+ chrome/browser/resources/ysp_config/ShowBrowser.js |   30 +
+ chrome/browser/resources/ysp_config/ShowData.js    |   52 +
+ chrome/browser/resources/ysp_config/base.css       |   10 +
+ .../resources/ysp_config/jquery.json-2.4.js        |  199 +
+ chrome/browser/resources/ysp_config/jquery.min.js  |    4 +
+ chrome/browser/resources/ysp_config/show.js        |   39 +
+ .../browser/resources/ysp_config/showConfig.html   |   34 +
+ chrome/browser/resources/ysp_ntp/Card.js           |  152 +
+ chrome/browser/resources/ysp_ntp/GroupApp.js       |  282 +
+ chrome/browser/resources/ysp_ntp/Header.js         |  142 +
+ chrome/browser/resources/ysp_ntp/HomeBrowser.js    |  216 +
+ chrome/browser/resources/ysp_ntp/HomeData.js       |  228 +
+ chrome/browser/resources/ysp_ntp/Server.js         |  184 +
+ chrome/browser/resources/ysp_ntp/amazeui.min.css   |    1 +
+ chrome/browser/resources/ysp_ntp/amazeui.min.js    |    8 +
+ chrome/browser/resources/ysp_ntp/base.css          |  140 +
+ chrome/browser/resources/ysp_ntp/home.css          |  397 +
+ chrome/browser/resources/ysp_ntp/home.html         |  110 +
+ chrome/browser/resources/ysp_ntp/home.js           |  124 +
+ chrome/browser/resources/ysp_ntp/images/baidu.png  |    0
+ chrome/browser/resources/ysp_ntp/images/bg.jpg     |    0
+ chrome/browser/resources/ysp_ntp/images/caigou.png |    0
+ .../browser/resources/ysp_ntp/images/cart_img.png  |    0
+ .../resources/ysp_ntp/images/default_icon.png      |    0
+ chrome/browser/resources/ysp_ntp/images/ditu.png   |    0
+ chrome/browser/resources/ysp_ntp/images/fanyi.png  |    0
+ .../resources/ysp_ntp/images/icon_amazeui.png      |    0
+ .../resources/ysp_ntp/images/icon_baidu.png        |    0
+ .../resources/ysp_ntp/images/icon_board.png        |    0
+ .../browser/resources/ysp_ntp/images/icon_cart.png |    0
+ .../browser/resources/ysp_ntp/images/icon_gw.png   |    0
+ .../browser/resources/ysp_ntp/images/icon_news.png |    0
+ .../browser/resources/ysp_ntp/images/icon_oa.png   |    0
+ .../resources/ysp_ntp/images/icon_ranking.png      |    0
+ .../browser/resources/ysp_ntp/images/icon_sale.png |    0
+ .../resources/ysp_ntp/images/icon_search.png       |    0
+ .../resources/ysp_ntp/images/icon_visit.png        |    0
+ .../resources/ysp_ntp/images/icon_weather.png      |    0
+ .../browser/resources/ysp_ntp/images/icon_wind.png |    0
+ .../resources/ysp_ntp/images/icon_xcloud.png       |    0
+ .../resources/ysp_ntp/images/logo_enterplorer.png  |    0
+ .../browser/resources/ysp_ntp/images/logo_jh.png   |    0
+ .../browser/resources/ysp_ntp/images/logo_zh.png   |    0
+ .../browser/resources/ysp_ntp/images/news_pic.png  |    0
+ .../browser/resources/ysp_ntp/images/news_pic2.png |    0
+ .../browser/resources/ysp_ntp/images/news_pic3.png |    0
+ .../resources/ysp_ntp/images/ranking_img.png       |    0
+ .../browser/resources/ysp_ntp/images/sale_img.png  |    0
+ .../resources/ysp_ntp/images/weather/100.png       |    0
+ .../resources/ysp_ntp/images/weather/101.png       |    0
+ .../resources/ysp_ntp/images/weather/104.png       |    0
+ .../resources/ysp_ntp/images/weather/300.png       |    0
+ .../resources/ysp_ntp/images/weather/301.png       |    0
+ .../resources/ysp_ntp/images/weather/302.png       |    0
+ .../resources/ysp_ntp/images/weather/303.png       |    0
+ .../resources/ysp_ntp/images/weather/304.png       |    0
+ .../resources/ysp_ntp/images/weather/305.png       |    0
+ .../resources/ysp_ntp/images/weather/306.png       |    0
+ .../resources/ysp_ntp/images/weather/307.png       |    0
+ .../resources/ysp_ntp/images/weather/309.png       |    0
+ .../resources/ysp_ntp/images/weather/310.png       |    0
+ .../resources/ysp_ntp/images/weather/311.png       |    0
+ .../resources/ysp_ntp/images/weather/312.png       |    0
+ .../resources/ysp_ntp/images/weather/313.png       |    0
+ .../resources/ysp_ntp/images/weather/400.png       |    0
+ .../resources/ysp_ntp/images/weather/401.png       |    0
+ .../resources/ysp_ntp/images/weather/402.png       |    0
+ .../resources/ysp_ntp/images/weather/403.png       |    0
+ .../resources/ysp_ntp/images/weather/404.png       |    0
+ .../resources/ysp_ntp/images/weather/405.png       |    0
+ .../resources/ysp_ntp/images/weather/406.png       |    0
+ .../resources/ysp_ntp/images/weather/407.png       |    0
+ .../resources/ysp_ntp/images/weather/501.png       |    0
+ .../resources/ysp_ntp/images/weather/502.png       |    0
+ .../resources/ysp_ntp/images/weather/503.png       |    0
+ .../resources/ysp_ntp/images/weather/504.png       |    0
+ .../resources/ysp_ntp/images/weather/507.png       |    0
+ .../resources/ysp_ntp/images/weather/508.png       |    0
+ .../resources/ysp_ntp/images/weather/999.png       |    0
+ .../resources/ysp_ntp/images/weather_bg.png        |    0
+ chrome/browser/resources/ysp_ntp/images/xinwen.png |    0
+ .../browser/resources/ysp_ntp/images/youxiang.png  |    0
+ chrome/browser/resources/ysp_ntp/images/yunpan.png |    0
+ .../browser/resources/ysp_ntp/images/zhuxing.png   |    0
+ .../browser/resources/ysp_ntp/jquery.json-2.4.js   |  402 +
+ chrome/browser/resources/ysp_ntp/jquery.min.js     |   12 +
+ chrome/browser/themes/theme_properties.h           |    3 +
+ chrome/browser/themes/theme_service_aurax11.cc     |    5 +
+ chrome/browser/ui/BUILD.gn                         |   52 +
+ chrome/browser/ui/browser.cc                       | 1709 +++-
+ chrome/browser/ui/browser.h                        |  113 +
+ chrome/browser/ui/browser_commands.cc              |  100 +
+ chrome/browser/ui/browser_commands.h               |   12 +
+ chrome/browser/ui/browser_navigator_params.h       |   11 +
+ chrome/browser/ui/browser_ui_prefs.cc              |   18 +
+ chrome/browser/ui/browser_window.h                 |    6 +
+ .../browser/ui/cocoa/background_gradient_view.mm   |    4 +
+ chrome/browser/ui/cocoa/browser_window_cocoa.mm    |    9 +
+ .../browser/ui/cocoa/browser_window_controller.h   |   10 +-
+ .../browser/ui/cocoa/browser_window_controller.mm  |   13 +
+ .../ui/cocoa/browser_window_controller_private.h   |    4 +
+ .../ui/cocoa/browser_window_controller_private.mm  |   25 +
+ chrome/browser/ui/cocoa/browser_window_layout.h    |    5 +-
+ chrome/browser/ui/cocoa/browser_window_layout.mm   |   48 +-
+ chrome/browser/ui/cocoa/bubble_view.mm             |    4 +
+ .../location_bar/autocomplete_text_field_cell.mm   |    6 +-
+ .../ui/cocoa/location_bar/location_bar_view_mac.h  |    3 +
+ chrome/browser/ui/cocoa/tabs/tab_controller.mm     |    8 +
+ .../browser/ui/cocoa/tabs/tab_strip_controller.h   |    2 +
+ .../browser/ui/cocoa/tabs/tab_strip_controller.mm  |   18 +-
+ chrome/browser/ui/cocoa/tabs/tab_strip_view.mm     |    7 +-
+ .../browser/ui/cocoa/tabs/tab_window_controller.h  |   18 +
+ .../browser/ui/cocoa/tabs/tab_window_controller.mm |   36 +
+ .../browser/ui/cocoa/ysp/ysp_account_controller.h  |   70 +
+ .../browser/ui/cocoa/ysp/ysp_account_controller.mm |  487 ++
+ chrome/browser/ui/cocoa/ysp/ysp_lock_view.h        |   29 +
+ chrome/browser/ui/cocoa/ysp/ysp_lock_view.mm       |   47 +
+ .../ui/cocoa/ysp/ysp_lock_view_controller.h        |   34 +
+ .../ui/cocoa/ysp/ysp_lock_view_controller.mm       |  281 +
+ .../ui/cocoa/ysp/ysp_login_manager_bridge.h        |   31 +
+ chrome/browser/ui/location_bar/location_bar.h      |    3 +
+ chrome/browser/ui/login/login_handler.cc           |   65 +-
+ chrome/browser/ui/simple_message_box.h             |    1 +
+ .../browser/ui/toolbar/bookmark_sub_menu_model.cc  |    7 +
+ chrome/browser/ui/toolbar/toolbar_actions_model.cc |    2 +
+ chrome/browser/ui/view_ids.h                       |    9 +
+ chrome/browser/ui/views/frame/browser_view.cc      |   71 +
+ chrome/browser/ui/views/frame/browser_view.h       |   18 +
+ .../browser/ui/views/frame/browser_view_layout.cc  |   77 +-
+ .../browser/ui/views/frame/browser_view_layout.h   |   10 +
+ .../desktop_linux_browser_frame_view_layout.cc     |    4 +
+ .../ui/views/frame/opaque_browser_frame_view.cc    |  169 +-
+ .../ui/views/frame/opaque_browser_frame_view.h     |   26 +
+ .../frame/opaque_browser_frame_view_layout.cc      |   88 +-
+ .../views/frame/opaque_browser_frame_view_layout.h |   11 +
+ .../opaque_browser_frame_view_layout_delegate.h    |    4 +
+ .../ui/views/frame/system_menu_model_builder.cc    |    2 +-
+ .../ui/views/frame/ysp_transparent_window.cc       |  502 ++
+ .../ui/views/frame/ysp_transparent_window.h        |   66 +
+ .../infobars/ysp_download_activex_infobar_view.cc  |  177 +
+ .../infobars/ysp_download_activex_infobar_view.h   |   56 +
+ .../ui/views/location_bar/location_bar_view.cc     |   83 +-
+ .../ui/views/location_bar/location_bar_view.h      |   25 +
+ .../views/location_bar/ysp_renderer_mode_view.cc   |  120 +
+ .../ui/views/location_bar/ysp_renderer_mode_view.h |   40 +
+ .../browser/ui/views/simple_message_box_views.cc   |    2 +
+ .../chrome_web_contents_view_delegate_views.cc     |   14 +
+ chrome/browser/ui/views/tabs/tab_strip.cc          |    9 +
+ chrome/browser/ui/views/toolbar/toolbar_view.cc    |   60 +
+ chrome/browser/ui/views/toolbar/toolbar_view.h     |    3 +
+ chrome/browser/ui/views/ysp_account_view.cc        |  492 ++
+ chrome/browser/ui/views/ysp_account_view.h         |   92 +
+ chrome/browser/ui/views/ysp_ie_login_view.cc       |  622 ++
+ chrome/browser/ui/views/ysp_ie_login_view.h        |  273 +
+ chrome/browser/ui/views/ysp_lock_screen_view.cc    |  313 +
+ chrome/browser/ui/views/ysp_lock_screen_view.h     |  121 +
+ chrome/browser/ui/views/ysp_login_view.cc          |  600 ++
+ chrome/browser/ui/views/ysp_login_view.h           |  140 +
+ .../ui/views/ysp_renderer_mode_bubble_view.cc      |  207 +
+ .../ui/views/ysp_renderer_mode_bubble_view.h       |   68 +
+ chrome/browser/ui/webui/about_ui.cc                |   11 +-
+ chrome/browser/ui/webui/cast/cast_ui.cc            |    4 +
+ .../ui/webui/chrome_web_ui_controller_factory.cc   |   17 +
+ .../ui/webui/options/ysp_modifyPassword_handler.cc |   60 +
+ .../ui/webui/options/ysp_modifyPassword_handler.h  |   49 +
+ .../webui/options/ysp_password_manager_handler.cc  |  417 +
+ .../webui/options/ysp_password_manager_handler.h   |   85 +
+ chrome/browser/ui/webui/signin/inline_login_ui.cc  |    4 +
+ chrome/browser/ui/webui/ysp_ntp/ep_newtab_ui.cc    |  470 +
+ chrome/browser/ui/webui/ysp_ntp/ep_newtab_ui.h     |   82 +
+ .../ui/webui/ysp_show_config/ep_show_config_ui.cc  |  255 +
+ .../ui/webui/ysp_show_config/ep_show_config_ui.h   |   75 +
+ .../ui/ysp_download_activex_infobar_delegate.cc    |  274 +
+ .../ui/ysp_download_activex_infobar_delegate.h     |   99 +
+ chrome/browser/ui/ysp_password_manager.cc          |  134 +
+ chrome/browser/ui/ysp_password_manager.h           |   41 +
+ chrome/browser/ysp_login.gypi                      |   56 +
+ chrome/browser/ysp_login/BUILD.gn                  |   59 +
+ chrome/browser/ysp_login/mac/hello                 |    0
+ chrome/browser/ysp_login/mac/ysp_sysinfo.h         |    2 +
+ chrome/browser/ysp_login/mac/ysp_sysinfo.mm        |   54 +
+ .../browser/ysp_login/ysp_auto_config_fetcher.cc   |  102 +
+ chrome/browser/ysp_login/ysp_auto_config_fetcher.h |   58 +
+ .../browser/ysp_login/ysp_company_info_fetcher.cc  |  104 +
+ .../browser/ysp_login/ysp_company_info_fetcher.h   |   67 +
+ chrome/browser/ysp_login/ysp_fetcher_resource.cc   |  119 +
+ chrome/browser/ysp_login/ysp_fetcher_resource.h    |   77 +
+ chrome/browser/ysp_login/ysp_hub_fetcher.cc        |   86 +
+ chrome/browser/ysp_login/ysp_hub_fetcher.h         |   65 +
+ chrome/browser/ysp_login/ysp_iplookup_fetcher.cc   |   86 +
+ chrome/browser/ysp_login/ysp_iplookup_fetcher.h    |   64 +
+ chrome/browser/ysp_login/ysp_login_fetcher.cc      |  157 +
+ chrome/browser/ysp_login/ysp_login_fetcher.h       |   79 +
+ chrome/browser/ysp_login/ysp_login_manager.cc      | 3997 +++++++++
+ chrome/browser/ysp_login/ysp_login_manager.h       |  380 +
+ chrome/browser/ysp_login/ysp_replace_fetcher.cc    |  109 +
+ chrome/browser/ysp_login/ysp_replace_fetcher.h     |   70 +
+ .../browser/ysp_login/ysp_singlesignon_fetcher.cc  |  107 +
+ .../browser/ysp_login/ysp_singlesignon_fetcher.h   |   70 +
+ chrome/browser/ysp_login/ysp_us_report_fetcher.cc  |  142 +
+ chrome/browser/ysp_login/ysp_us_report_fetcher.h   |   60 +
+ chrome/browser/ysp_update/mac/AppKitPrevention.h   |   20 +
+ .../browser/ysp_update/mac/SUDiskImageUnarchiver.h |   25 +
+ .../browser/ysp_update/mac/SUDiskImageUnarchiver.m |  224 +
+ chrome/browser/ysp_update/mac/SUErrors.h           |   56 +
+ chrome/browser/ysp_update/mac/SUExport.h           |   18 +
+ chrome/browser/ysp_update/mac/SULocalizations.h    |   16 +
+ chrome/browser/ysp_update/mac/SULog.h              |   29 +
+ chrome/browser/ysp_update/mac/SULog.m              |  140 +
+ chrome/browser/ysp_update/mac/SUOperatingSystem.h  |   24 +
+ .../browser/ysp_update/mac/SUUnarchiverNotifier.h  |   25 +
+ .../browser/ysp_update/mac/SUUnarchiverNotifier.m  |   79 +
+ .../browser/ysp_update/mac/SUUnarchiverProtocol.h  |   25 +
+ chrome/browser/ysp_update/mac/build_ut.sh          |    1 +
+ chrome/browser/ysp_update/mac/unit_test.m          |   84 +
+ chrome/browser/ysp_update/ysp_pac_manager.cc       |  168 +
+ chrome/browser/ysp_update/ysp_pac_manager.h        |   54 +
+ chrome/browser/ysp_update/ysp_update_fetcher.cc    |  124 +
+ chrome/browser/ysp_update/ysp_update_fetcher.h     |   72 +
+ chrome/browser/ysp_update/ysp_update_manager.cc    |  575 ++
+ chrome/browser/ysp_update/ysp_update_manager.h     |   72 +
+ .../browser/ysp_update/ysp_update_manager_mac.mm   |   57 +
+ chrome/common/chrome_constants.cc                  |   26 +
+ chrome/common/chrome_content_client.cc             |    8 +
+ chrome/common/chrome_paths_linux.cc                |    2 +
+ chrome/common/chrome_paths_mac.mm                  |    4 +
+ chrome/common/extensions/api/BUILD.gn              |    5 +
+ .../extensions/api/_permission_features.json       |    4 +
+ chrome/common/extensions/api/tabs.json             |   83 +
+ chrome/common/extensions/api/web_navigation.json   |  276 +-
+ chrome/common/extensions/api/yspmanager.json       |   41 +
+ chrome/common/pref_names.cc                        |   19 +
+ chrome/common/pref_names.h                         |   17 +
+ chrome/common/webui_url_constants.cc               |  173 +
+ chrome/common/webui_url_constants.h                |    4 +
+ chrome/installer/gcapi/gcapi.cc                    |   16 +
+ chrome/installer/gcapi/google_update_util.cc       |   12 +
+ .../launcher_support/chrome_launcher_support.cc    |   17 +
+ chrome/installer/linux/BUILD.gn                    |   47 +-
+ chrome/installer/linux/common/installer.include    |   14 +-
+ .../common/redcore/redcore-browser.appdata.xml     |   28 +
+ .../linux/common/redcore/redcore-browser.info      |   30 +
+ chrome/installer/linux/debian/build.sh             |    5 +
+ chrome/installer/mini_installer/BUILD.gn           |    2 +-
+ chrome/installer/mini_installer/chrome.release     |    5 +
+ chrome/tools/build/linux/FILES_redcore.cfg         |  219 +
+ chrome/tools/build/linux/make_zip_redcore          |   15 +
+ chrome/tools/build/linux/redcore-wrapper           |    9 +
+ chrome/tools/build/win/create_installer_archive.py |   10 +
+ codesign_mac.sh                                    |    2 +
+ components/autofill/core/common/password_form.cc   |    5 +
+ components/autofill/core/common/password_form.h    |    6 +
+ components/components_strings.grd                  |    2 +-
+ .../database/in_progress/in_progress_info.cc       |    3 +
+ .../database/in_progress/in_progress_info.h        |    4 +
+ components/download/internal/common/BUILD.gn       |    6 +
+ .../internal/common/download_file_factory.cc       |   20 +
+ .../download/internal/common/download_file_ie.cc   |  271 +
+ .../download/internal/common/download_file_impl.cc |    6 +
+ .../download/internal/common/download_item_impl.cc |  101 +-
+ .../common/in_progress_download_manager.cc         |    3 +
+ components/download/public/common/BUILD.gn         |    5 +
+ components/download/public/common/base_file.h      |    4 +
+ components/download/public/common/download_file.h  |    4 +
+ .../download/public/common/download_file_factory.h |   24 +
+ .../download/public/common/download_file_ie.h      |  130 +
+ .../download/public/common/download_file_impl.h    |    4 +
+ components/download/public/common/download_item.h  |   12 +
+ .../download/public/common/download_item_factory.h |    3 +
+ .../download/public/common/download_item_impl.h    |   33 +
+ .../public/common/download_url_parameters.cc       |   26 +
+ .../public/common/download_url_parameters.h        |   24 +-
+ .../favicon/content/content_favicon_driver.cc      |   27 +
+ .../favicon/content/content_favicon_driver.h       |   11 +
+ components/history/core/browser/BUILD.gn           |    8 +
+ components/history/core/browser/download_row.cc    |    1 +
+ components/history/core/browser/download_row.h     |    4 +
+ .../history/core/browser/expire_history_backend.cc |   13 +
+ .../history/core/browser/expire_history_backend.h  |    4 +-
+ components/history/core/browser/history_backend.cc |   41 +
+ components/history/core/browser/history_backend.h  |    8 +-
+ components/history/core/browser/history_service.cc |   11 +
+ components/history/core/browser/history_service.h  |    3 +
+ components/history/core/browser/history_types.cc   |    8 +
+ components/history/core/browser/history_types.h    |    8 +
+ .../history/core/browser/typed_url_sync_bridge.cc  |   25 +-
+ components/history/core/browser/url_row.cc         |    3 +
+ components/history/core/browser/url_row.h          |   16 +
+ components/history/core/browser/visit_database.cc  |   22 +-
+ components/history/core/browser/visit_database.h   |   12 +-
+ components/infobars/core/infobar_delegate.cc       |   10 +
+ components/infobars/core/infobar_delegate.h        |   12 +-
+ components/omnibox/browser/builtin_provider.cc     |    4 +
+ components/os_crypt/keychain_password_mac.mm       |    1 +
+ .../core/browser/login_database.cc                 |   68 +
+ .../password_manager/core/browser/login_database.h |    4 +
+ .../core/browser/password_form_manager.cc          |  109 +
+ .../core/browser/password_form_manager.h           |    6 +
+ .../core/browser/password_store.cc                 |   41 +-
+ .../password_manager/core/browser/password_store.h |   18 +-
+ .../core/browser/password_store_consumer.h         |    2 +-
+ .../core/browser/password_store_default.cc         |   49 +
+ .../core/browser/password_store_default.h          |    3 +
+ components/prefs/pref_service.h                    |   17 +
+ components/sync_sessions/synced_session.cc         |    1 +
+ components/version_info/version_info.cc            |   10 +
+ components/version_info/version_info.h             |    5 +
+ .../version_info/version_info_values.h.version     |    8 +-
+ components/ysp_doc_view.gypi                       |   35 +
+ components/ysp_doc_view/BUILD.gn                   |   25 +
+ components/ysp_doc_view/ysp_doc_view_fetcher.cc    |  131 +
+ components/ysp_doc_view/ysp_doc_view_fetcher.h     |   66 +
+ components/ysp_doc_view/ysp_doc_view_manager.cc    |  193 +
+ components/ysp_doc_view/ysp_doc_view_manager.h     |   70 +
+ components/ysp_sysinfo.gypi                        |   27 +
+ components/zoom/zoom_controller.cc                 |   12 +
+ content/browser/BUILD.gn                           |   15 +
+ content/browser/download/download_manager_impl.cc  |  171 +-
+ content/browser/download/download_manager_impl.h   |   26 +
+ .../renderer_host/render_process_host_impl.cc      |   16 +
+ .../renderer_host/render_process_host_impl.h       |   10 +
+ .../renderer_host/render_widget_host_impl.cc       |   33 +
+ .../renderer_host/render_widget_host_impl.h        |    8 +
+ content/browser/storage_partition_impl_map.cc      |    7 +
+ content/browser/web_contents/web_contents_ie.cc    | 1281 +++
+ content/browser/web_contents/web_contents_ie.h     |  247 +
+ .../web_contents/web_contents_ie_view_aura.cc      |   99 +
+ .../web_contents/web_contents_ie_view_aura.h       |   55 +
+ content/browser/web_contents/web_contents_impl.cc  |   79 +-
+ content/browser/web_contents/web_contents_impl.h   |   15 +-
+ content/browser/web_contents/web_contents_view.h   |    4 +
+ .../browser/web_contents/web_contents_view_aura.cc |    7 +
+ .../browser/web_contents/web_contents_view_aura.h  |   15 +-
+ .../web_contents/web_contents_view_child_frame.cc  |    2 +
+ .../web_contents/web_contents_view_child_frame.h   |    2 +
+ .../web_contents/web_contents_view_guest.cc        |    1 +
+ .../browser/web_contents/web_contents_view_guest.h |    2 +
+ .../browser/ysp_resource_replace_interceptor.cc    |  252 +
+ content/browser/ysp_resource_replace_interceptor.h |   54 +
+ content/common/BUILD.gn                            |   41 +
+ content/common/IE/ATLInclude.h                     |   14 +
+ content/common/IE/BrowserHostEventDelegant.cpp     | 1094 +++
+ content/common/IE/BrowserHostEventDelegant.h       |  149 +
+ content/common/IE/BrowserProcess.cpp               |  660 ++
+ content/common/IE/BrowserProcess.h                 |  103 +
+ content/common/IE/DevToolsHost.cpp                 |  191 +
+ content/common/IE/DevToolsHost.h                   |   71 +
+ content/common/IE/DocHostUIHandler.cpp             | 1287 +++
+ content/common/IE/DocHostUIHandler.h               |  352 +
+ content/common/IE/HttpMonitor.cpp                  |  341 +
+ content/common/IE/HttpMonitor.h                    |  177 +
+ content/common/IE/IEEvent.cpp                      |  962 ++
+ content/common/IE/IEEvent.h                        |  195 +
+ content/common/IE/IEEventHandler.h                 |   41 +
+ content/common/IE/IEInterface.idl                  |  113 +
+ content/common/IE/IEInterface_h.h                  |  990 +++
+ content/common/IE/IEInterface_i.c                  |   96 +
+ content/common/IE/IEInterface_p.c                  | 8808 +++++++++++++++++++
+ content/common/IE/IEProcessModule.h                |   20 +
+ content/common/IE/IEVersion.h                      |   75 +
+ content/common/IE/JavaScriptHandler.cpp            |  109 +
+ content/common/IE/JavaScriptHandler.h              |   87 +
+ content/common/IE/WebBrowser.cpp                   | 2438 ++++++
+ content/common/IE/WebBrowser.h                     |  304 +
+ content/common/IE/XPathNode.cpp                    |  231 +
+ content/common/IE/XPathNode.h                      |   60 +
+ content/common/IE/XPathNodePredicates.cpp          |  128 +
+ content/common/IE/XPathNodePredicates.h            |   41 +
+ content/common/IE/XPathParse.cpp                   |  120 +
+ content/common/IE/XPathParse.h                     |   47 +
+ content/common/IE/dlldata.c                        |   38 +
+ content/common/user_agent.cc                       |   10 +
+ content/content.rc                                 |   60 +
+ content/public/app/sandbox_helper_win.h            |    4 +-
+ content/public/browser/download_manager.h          |   11 +
+ content/public/browser/render_process_host.h       |    6 +
+ content/public/browser/web_contents.h              |   16 +-
+ content/public/browser/web_contents_delegate.cc    |    8 +
+ content/public/browser/web_contents_delegate.h     |    8 +
+ content/public/browser/web_contents_observer.h     |    8 +
+ content/public/common/url_constants.cc             |   29 +
+ content/renderer/renderer_main_ie.cc               |   76 +
+ content/renderer/trident_main_platform_delegate.cc |   36 +
+ content/renderer/trident_main_platform_delegate.h  |   29 +
+ content/resource.h                                 |    0
+ crypto/BUILD.gn                                    |    6 +
+ crypto/ysp_crypto_encryption.cc                    | 1029 +++
+ crypto/ysp_crypto_encryption.h                     |   29 +
+ crypto/ysp_crypto_header.cc                        |  520 ++
+ crypto/ysp_crypto_header.h                         |   29 +
+ .../browser/extension_event_histogram_value.h      |   10 +
+ .../browser/extension_function_histogram_value.h   |    6 +
+ extensions/common/csp_validator.cc                 |    4 +
+ extensions/common/user_script.cc                   |    4 +
+ extensions/renderer/extension_injection_host.cc    |    4 +
+ net/BUILD.gn                                       |    9 +
+ net/cookies/canonical_cookie.cc                    |   10 +-
+ net/cookies/canonical_cookie.h                     |    7 +
+ net/cookies/cookie_monster.cc                      |   40 +
+ net/cookies/cookie_monster.h                       |   11 +
+ net/cookies/cookie_store.h                         |    6 +
+ net/disk_cache/blockfile/entry_impl.cc             |  134 +-
+ net/disk_cache/blockfile/entry_impl.h              |    9 +
+ net/dns/host_resolver_impl.cc                      |   35 +
+ net/dns/host_resolver_impl.h                       |    7 +
+ .../sqlite/sqlite_persistent_cookie_store.cc       |   71 +-
+ net/http/gm_sangfor_interface.cc                   |  670 ++
+ net/http/gm_sangfor_interface.h                    |  303 +
+ net/socket/transport_client_socket_pool.cc         |  129 +
+ net/socket/transport_client_socket_pool.h          |   14 +
+ net/socket/ysp_spa_packet.cc                       |  577 ++
+ net/socket/ysp_spa_packet.h                        |   56 +
+ net/url_request/url_request_http_job.cc            |  438 +
+ net/url_request/url_request_http_job.h             |   17 +
+ pdf/out_of_process_instance.cc                     |    4 +
+ .../public/cpp/cookie_manager_mojom_traits.cc      |    3 +-
+ setenv_mac_debug.sh                                |    2 +
+ setenv_mac_release.sh                              |    5 +
+ third_party/minhook/.editorconfig                  |   22 +
+ third_party/minhook/AUTHORS.txt                    |    8 +
+ third_party/minhook/LICENSE.txt                    |   81 +
+ third_party/minhook/README.md                      |   88 +
+ third_party/minhook/build/MinGW/Makefile           |   33 +
+ third_party/minhook/build/MinGW/make.bat           |    1 +
+ third_party/minhook/dll_resources/MinHook.def      |   14 +
+ third_party/minhook/dll_resources/MinHook.rc       |   32 +
+ third_party/minhook/include/MinHook.h              |  186 +
+ third_party/minhook/src/buffer.c                   |  312 +
+ third_party/minhook/src/buffer.h                   |   42 +
+ third_party/minhook/src/hde/hde32.c                |  326 +
+ third_party/minhook/src/hde/hde32.h                |  105 +
+ third_party/minhook/src/hde/hde64.c                |  337 +
+ third_party/minhook/src/hde/hde64.h                |  112 +
+ third_party/minhook/src/hde/pstdint.h              |   39 +
+ third_party/minhook/src/hde/table32.h              |   73 +
+ third_party/minhook/src/hde/table64.h              |   74 +
+ third_party/minhook/src/hook.c                     |  889 ++
+ third_party/minhook/src/trampoline.c               |  316 +
+ third_party/minhook/src/trampoline.h               |  105 +
+ tools/grit/grit/format/data_pack.py                |    3 +
+ tools/grit/grit/format/yspbrowser/__init__.py      |    5 +
+ tools/grit/grit/format/yspbrowser/default.py       |   83 +
+ tools/grit/grit/format/yspbrowser/en.py            |   83 +
+ tools/grit/grit/format/yspbrowser/processor.py     |   78 +
+ tools/grit/grit/format/yspbrowser/zh_cn.py         |   70 +
+ tools/metrics/histograms/enums.xml                 |    4 +
+ tools/perf/chrome_telemetry_build/BUILD.gn         |    2 +-
+ ui/aura/window_observer.cc                         |    2 +-
+ ui/aura/window_tree_host.h                         |    6 +
+ ui/base/page_transition_types.h                    |    6 +-
+ ui/base/resource/resource_bundle.cc                |   10 +
+ ui/base/resource/resource_bundle.h                 |    6 +
+ ui/base/win/accessibility_misc_utils.cc            |    7 +
+ ui/base/win/accessibility_misc_utils.h             |    4 +
+ ui/views/controls/image_view.cc                    |   17 +
+ ui/views/controls/image_view.h                     |   11 +
+ .../ysp/browser_close_hover.png                    |  Bin 0 -> 164 bytes
+ .../ysp/browser_close_normal.png                   |  Bin 0 -> 164 bytes
+ .../ysp/browser_close_pressed.png                  |  Bin 0 -> 164 bytes
+ .../ysp/browser_fullscreen_hover.png               |  Bin 0 -> 129 bytes
+ .../ysp/browser_fullscreen_normal.png              |  Bin 0 -> 129 bytes
+ .../ysp/browser_fullscreen_pressed.png             |  Bin 0 -> 129 bytes
+ .../ysp/browser_minimize_hover.png                 |  Bin 0 -> 126 bytes
+ .../ysp/browser_minimize_normal.png                |  Bin 0 -> 126 bytes
+ .../ysp/browser_minimize_pressed.png               |  Bin 0 -> 126 bytes
+ .../ysp/browser_windowed_hover.png                 |  Bin 0 -> 139 bytes
+ .../ysp/browser_windowed_normal.png                |  Bin 0 -> 139 bytes
+ .../ysp/browser_windowed_pressed.png               |  Bin 0 -> 139 bytes
+ .../ysp/lock_screen_close_hover.png                |  Bin 0 -> 164 bytes
+ .../ysp/lock_screen_close_normal.png               |  Bin 0 -> 180 bytes
+ .../ysp/lock_screen_close_pressed.png              |  Bin 0 -> 164 bytes
+ .../ysp/lock_screen_maximize_hover.png             |  Bin 0 -> 142 bytes
+ .../ysp/lock_screen_maximize_normal.png            |  Bin 0 -> 142 bytes
+ .../ysp/lock_screen_maximize_pressed.png           |  Bin 0 -> 142 bytes
+ .../ysp/lock_screen_minimize_hover.png             |  Bin 0 -> 140 bytes
+ .../ysp/lock_screen_minimize_normal.png            |  Bin 0 -> 131 bytes
+ .../ysp/lock_screen_minimize_pressed.png           |  Bin 0 -> 140 bytes
+ .../ysp/lock_screen_restore_hover.png              |  Bin 0 -> 152 bytes
+ .../ysp/lock_screen_restore_normal.png             |  Bin 0 -> 152 bytes
+ .../ysp/lock_screen_restore_pressed.png            |  Bin 0 -> 152 bytes
+ ui/views/resources/views_resources.grd             |   64 +-
+ ui/views/win/hwnd_message_handler.cc               |   10 +-
+ ui/views/win/hwnd_message_handler.h                |   13 +-
+ url/url_util.cc                                    |    1 +
+ 815 files changed, 73610 insertions(+), 261 deletions(-)
